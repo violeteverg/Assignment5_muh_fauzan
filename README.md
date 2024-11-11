@@ -125,3 +125,11 @@ running app using
 ```bash
   npm run dev
   ```
+
+### 4. **checking swagger**
+
+running app using
+
+```bash
+  http://localhost:3000/api-docs
+  ```
