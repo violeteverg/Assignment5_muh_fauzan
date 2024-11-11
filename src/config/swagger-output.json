@@ -1,0 +1,1361 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Assignment5_documentation",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "servers": [
+    {
+      "url": "http://localhost"
+    }
+  ],
+  "paths": {
+    "/api/customers": {
+      "post": {
+        "tags": ["customers"],
+        "summary": "Create customer",
+        "description": "Create a new customer with associated addresses and contacts.",
+        "operationId": "createCustomer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "addresses": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "full_address": {
+                          "type": "string",
+                          "example": "123 Main St, New York, NY 10001"
+                        }
+                      }
+                    },
+                    "example": [
+                      {
+                        "full_address": "123 Main St, New York, NY 10001"
+                      }
+                    ]
+                  },
+                  "contacts": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "email": {
+                          "type": "string",
+                          "example": "john.doe@examples.com"
+                        },
+                        "phone": {
+                          "type": "string",
+                          "example": "1234567890"
+                        }
+                      }
+                    },
+                    "example": [
+                      {
+                        "email": "john.doe@examples.com",
+                        "phone": "1234567890"
+                      }
+                    ]
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                  }
+                }
+              },
+              "examples": {
+                "create customer": {
+                  "value": {
+                    "addresses": [
+                      {
+                        "full_address": "123 Main St, New York, NY 10001"
+                      }
+                    ],
+                    "contacts": [
+                      {
+                        "email": "john.doe@examples.com",
+                        "phone": "1234567890"
+                      }
+                    ],
+                    "name": "John Doe"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Customer created successfully."
+          },
+          "400": {
+            "description": "Bad Request - validation error or missing required fields.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Validation failed",
+                  "errors": {
+                    "name": "Name is required",
+                    "contacts": "At least one contact is required"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "An error occurred on the server."
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["customers"],
+        "summary": "Get all customers",
+        "description": "Retrieve a list of all customers, including their associated addresses, contacts, and orders.",
+        "operationId": "getAllCustomers",
+        "responses": {
+          "200": {
+            "description": "A list of customers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "John Doe"
+                          },
+                          "addresses": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "full_address": {
+                                  "type": "string",
+                                  "example": "123 Main St, New York, NY 10001"
+                                }
+                              }
+                            }
+                          },
+                          "contacts": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "email": {
+                                  "type": "string",
+                                  "example": "john.doe@examples.com"
+                                },
+                                "phone": {
+                                  "type": "string",
+                                  "example": "1234567890"
+                                }
+                              }
+                            }
+                          },
+                          "orders": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "order_id": {
+                                  "type": "integer",
+                                  "example": 101
+                                },
+                                "order_date": {
+                                  "type": "string",
+                                  "format": "date-time",
+                                  "example": "2024-11-11T08:00:00Z"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "An error occurred on the server."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/customers/{customer_id}": {
+      "get": {
+        "tags": ["customers"],
+        "summary": "Get customer by ID",
+        "description": "Retrieve a customer by their unique ID, along with their contacts, addresses, and orders.",
+        "operationId": "getCustomerById",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "The unique ID of the customer to retrieve."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Customer retrieved successfully.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "customer_id": 1,
+                  "name": "John Doe",
+                  "contacts": [
+                    {
+                      "email": "john.doe@examples.com",
+                      "phone": "1234567890"
+                    }
+                  ],
+                  "addresses": [
+                    {
+                      "full_address": "123 Main St, New York, NY 10001"
+                    }
+                  ],
+                  "orders": [
+                    {
+                      "order_id": 1,
+                      "total_amount": 250.75
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Customer not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Pelanggan tidak ditemukan."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Terjadi kesalahan pada server."
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["customers"],
+        "summary": "Update customer",
+        "description": "Update customer details, including contacts and addresses.",
+        "operationId": "updateCustomer",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "The unique ID of the customer to update."
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "addresses": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "address_id": { "type": "number", "example": 3 },
+                        "full_address": {
+                          "type": "string",
+                          "example": "456 Updated St, New York, NY 10002"
+                        }
+                      }
+                    },
+                    "example": [
+                      {
+                        "address_id": 3,
+                        "full_address": "456 Updated St, New York, NY 10002"
+                      }
+                    ]
+                  },
+                  "contacts": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "contact_id": { "type": "number", "example": 7 },
+                        "email": {
+                          "type": "string",
+                          "example": "john.updated.doe@example.com"
+                        },
+                        "phone": { "type": "string", "example": "9876543210" }
+                      }
+                    },
+                    "example": [
+                      {
+                        "contact_id": 7,
+                        "email": "john.updated.doe@example.com",
+                        "phone": "9876543210"
+                      }
+                    ]
+                  },
+                  "name": { "type": "string", "example": "John Updated Doe" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Customer updated successfully.",
+            "content": {
+              "application/json": {
+                "example": { "message": "Pelanggan berhasil diperbarui" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - invalid input or missing fields.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Validation failed",
+                  "errors": {
+                    "name": "Name is required",
+                    "contacts": "At least one contact is required"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Customer not found.",
+            "content": {
+              "application/json": {
+                "example": { "message": "Pelanggan tidak ditemukan." }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": { "message": "Terjadi kesalahan pada server." }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["customers"],
+        "summary": "Delete customer",
+        "description": "Delete a customer by ID.",
+        "operationId": "deleteCustomer",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "The unique ID of the customer to delete."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Customer deleted successfully."
+          },
+          "404": {
+            "description": "Customer not found.",
+            "content": {
+              "application/json": {
+                "example": { "message": "Pelanggan tidak ditemukan." }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": { "message": "Terjadi kesalahan pada server." }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/customers/{customer_id}/addresses": {
+      "get": {
+        "tags": ["customers"],
+        "summary": "Get user addresses",
+        "description": "Retrieve all addresses associated with a specific customer.",
+        "operationId": "getUserAddresses",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 2
+            },
+            "description": "The unique ID of the customer whose addresses are being retrieved."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the addresses.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "ok",
+                  "data": [
+                    {
+                      "address_id": 1,
+                      "full_address": "Jl. Senang, New York"
+                    },
+                    {
+                      "address_id": 2,
+                      "full_address": "Jl. Bahagia, Jakarta"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Customer not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Pelanggan tidak ditemukan."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Terjadi kesalahan pada server."
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["customers"],
+        "summary": "Create user address",
+        "description": "Create a new address for a specific customer.",
+        "operationId": "createUserAddress",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 2
+            },
+            "description": "The unique ID of the customer for whom the address is being created."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "full_address": {
+                    "type": "string",
+                    "example": "Jl. Senang, New York"
+                  }
+                },
+                "required": ["full_address"]
+              },
+              "examples": {
+                "createUserAddress": {
+                  "value": {
+                    "full_address": "Jl. Senang, New York"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created the address.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "ok",
+                  "data": {
+                    "address_id": 3,
+                    "full_address": "Jl. Senang, New York",
+                    "customer_id": 2
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Customer not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Pelanggan tidak ditemukan."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Terjadi kesalahan pada server."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/customers/{customer_id}/contacts": {
+      "get": {
+        "tags": ["customers"],
+        "summary": "Get user contacts",
+        "description": "Retrieve all contacts associated with a specific customer.",
+        "operationId": "getUserContacts",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "The unique ID of the customer whose contacts are being retrieved."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the contacts.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "ok",
+                  "data": [
+                    {
+                      "contact_id": 1,
+                      "email": "user@mails.com",
+                      "phone": "08888812345"
+                    },
+                    {
+                      "contact_id": 2,
+                      "email": "anotheruser@mails.com",
+                      "phone": "08888898765"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Customer not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Pelanggan tidak ditemukan."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Terjadi kesalahan pada server."
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["customers"],
+        "summary": "Create user contact",
+        "description": "Create a new contact for a specific customer.",
+        "operationId": "createUserContact",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "The unique ID of the customer for whom the contact is being created."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "user@mails.com"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "example": "08888812345"
+                  }
+                },
+                "required": ["email", "phone"]
+              },
+              "examples": {
+                "createUserContact": {
+                  "value": {
+                    "email": "user@mails.com",
+                    "phone": "08888812345"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created the contact.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "created",
+                  "data": {
+                    "contact_id": 3,
+                    "email": "user@mails.com",
+                    "phone": "08888812345",
+                    "customer_id": 1
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Customer not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Pelanggan tidak ditemukan."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Terjadi kesalahan pada server."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/customers/{customer_id}/orders": {
+      "get": {
+        "tags": ["customers"],
+        "summary": "Get user orders",
+        "description": "Retrieve all orders for a specific customer.",
+        "operationId": "getUserOrders",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "The unique ID of the customer whose orders are to be retrieved."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the orders for the customer.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "ok",
+                  "data": [
+                    {
+                      "order_id": 1,
+                      "customer_id": 1,
+                      "total_amount": 500,
+                      "status": "pending",
+                      "order_date": "2024-11-11T00:00:00Z",
+                      "products": [
+                        { "product_id": 1, "quantity": 2 },
+                        { "product_id": 2, "quantity": 1 }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Customer not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Pelanggan tidak ditemukan."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Terjadi kesalahan pada server."
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["customers"],
+        "summary": "Create user orders",
+        "description": "Create a new order for a specific customer.",
+        "operationId": "createUserOrders",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "The unique ID of the customer for whom the order is to be created."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "products": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "product_id": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "quantity": {
+                          "type": "integer",
+                          "example": 2
+                        }
+                      }
+                    },
+                    "example": [
+                      {
+                        "product_id": 1,
+                        "quantity": 2
+                      },
+                      {
+                        "product_id": 2,
+                        "quantity": 1
+                      }
+                    ]
+                  },
+                  "total_amount": {
+                    "type": "integer",
+                    "example": 500
+                  }
+                }
+              },
+              "examples": {
+                "create user orders": {
+                  "value": {
+                    "products": [
+                      {
+                        "product_id": 1,
+                        "quantity": 2
+                      },
+                      {
+                        "product_id": 2,
+                        "quantity": 1
+                      }
+                    ],
+                    "total_amount": 500
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created the order.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "create",
+                  "data": {
+                    "order_id": 1,
+                    "customer_id": 1,
+                    "total_amount": 500,
+                    "status": "pending",
+                    "order_date": "2024-11-11T00:00:00Z",
+                    "products": [
+                      { "product_id": 1, "quantity": 2 },
+                      { "product_id": 2, "quantity": 1 }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Customer not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Pelanggan tidak ditemukan."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Terjadi kesalahan pada server."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/addresses/{address_id}": {
+      "put": {
+        "tags": ["addresses"],
+        "summary": "Update user address",
+        "description": "Update the full address of a specific user.",
+        "operationId": "updateAddressUser",
+        "parameters": [
+          {
+            "name": "address_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "The unique ID of the address that needs to be updated."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "full_address": {
+                    "type": "string",
+                    "example": "jl bahagia sekali"
+                  }
+                },
+                "required": ["full_address"]
+              },
+              "examples": {
+                "update address user": {
+                  "value": {
+                    "full_address": "jl bahagia sekali"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the address.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "ok",
+                  "data": {
+                    "address_id": 1,
+                    "full_address": "jl bahagia sekali"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Address not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Alamat tidak ditemukan."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Terjadi kesalahan pada server."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["addresses"],
+        "summary": "Delete user address",
+        "description": "Delete a specific user's address.",
+        "operationId": "deleteAddressUser",
+        "parameters": [
+          {
+            "name": "address_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "The unique ID of the address that needs to be deleted."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successfully deleted the address.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "delete"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Address not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Alamat tidak ditemukan."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Terjadi kesalahan pada server."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/contacts/{contact_id}": {
+      "put": {
+        "tags": ["contacts"],
+        "summary": "Update user contact",
+        "description": "Update the contact details (phone and email) for a specific user.",
+        "operationId": "updateUserContacts",
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 7
+            },
+            "description": "The unique ID of the contact that needs to be updated."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "john.updated.doe@example.com"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "example": "0888888765"
+                  }
+                },
+                "required": ["email", "phone"]
+              },
+              "examples": {
+                "update user contacts": {
+                  "value": {
+                    "email": "john.updated.doe@example.com",
+                    "phone": "0888888765"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the contact.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "update",
+                  "data": {
+                    "contact_id": 7,
+                    "email": "john.updated.doe@example.com",
+                    "phone": "0888888765"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Contact not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Kontak tidak ditemukan."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Terjadi kesalahan pada server."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["contacts"],
+        "summary": "Delete user contact",
+        "description": "Delete a specific user's contact.",
+        "operationId": "deleteUserContacts",
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 7
+            },
+            "description": "The unique ID of the contact that needs to be deleted."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successfully deleted the contact.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "delete"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Contact not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Kontak tidak ditemukan."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Terjadi kesalahan pada server."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/{order_id}": {
+      "put": {
+        "tags": ["orders"],
+        "summary": "Update user orders",
+        "description": "Update an existing order by ID.",
+        "operationId": "updateUserOrders",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "The unique ID of the order to be updated."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "products": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "product_id": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "quantity": {
+                          "type": "integer",
+                          "example": 4
+                        }
+                      }
+                    },
+                    "example": [
+                      {
+                        "product_id": 1,
+                        "quantity": 4
+                      },
+                      {
+                        "product_id": 2,
+                        "quantity": 2
+                      }
+                    ]
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "shipped"
+                  },
+                  "total_amount": {
+                    "type": "integer",
+                    "example": 600
+                  }
+                }
+              },
+              "examples": {
+                "update user orders": {
+                  "value": {
+                    "products": [
+                      {
+                        "product_id": 1,
+                        "quantity": 4
+                      },
+                      {
+                        "product_id": 2,
+                        "quantity": 2
+                      }
+                    ],
+                    "status": "shipped",
+                    "total_amount": 600
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated the order.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "update",
+                  "data": {
+                    "order_id": 1,
+                    "status": "shipped",
+                    "total_amount": 600,
+                    "products": [
+                      { "product_id": 1, "quantity": 4 },
+                      { "product_id": 2, "quantity": 2 }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Pesanan tidak ditemukan."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Terjadi kesalahan pada server."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["orders"],
+        "summary": "Delete an order",
+        "description": "Delete an existing order by ID.",
+        "operationId": "deleteUserOrder",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "The unique ID of the order to be deleted."
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successfully deleted the order."
+          },
+          "404": {
+            "description": "Order not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Pesanan tidak ditemukan."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Terjadi kesalahan pada server."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "customers"
+    },
+    {
+      "name": "addresses"
+    },
+    {
+      "name": "contacts"
+    },
+    {
+      "name": "orders"
+    }
+  ]
+}

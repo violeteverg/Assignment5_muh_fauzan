@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Customer {
+  customer_id  Int       @id @default(autoincrement())
+  name         String
+  contacts     Contact[] 
+  addresses    Address[] 
+  orders       Order[]   
+}
+
+model Contact {
+  contact_id   Int       @id @default(autoincrement())
+  customer_id  Int
+  phone        String
+  email        String     @unique
+  customer     Customer   @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade)
+}
+
+model Address {
+  address_id   Int       @id @default(autoincrement())
+  customer_id  Int
+  full_address String
+  customer     Customer   @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade)
+}
+
+model Order {
+  order_id     Int       @id @default(autoincrement())
+  customer_id  Int
+  order_date   DateTime
+  status       String
+  products     Json
+  total_amount Float
+  customer     Customer   @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade)
+}
+
+
